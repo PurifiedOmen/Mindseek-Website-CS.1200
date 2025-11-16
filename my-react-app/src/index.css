@@ -13,20 +13,41 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Custom accent colors */
+  /* Custom accent colors (from File 1) */
   --purple-accent: #7e57c2;
   --purple-accent-light: #bda5e0;
   --purple-bg-light: #f3eefe;
   --purple-hover: #6d48b5;
   --purple-soft: #ede7f6;
   --error: #ff6b6b;
+
+  /* Utility colors & styles (from File 2) */
+  --primary-color: #2563eb;
+  --primary-dark: #1e40af;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --border-color: #e5e7eb;
+  --bg-light: #f9fafb;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Global Reset (from File 2) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: white;
+  background: white; /* Kept from File 1 (for landing page) */
 }
 
 /* Global links */
@@ -34,12 +55,34 @@ a {
   font-weight: 500;
   color: var(--purple-accent);
   text-decoration: inherit;
+  transition: color 0.3s ease; /* Added transition */
 }
 a:hover {
   color: var(--purple-hover);
 }
 
-/* Buttons */
+/* Headings (from File 2) */
+h1 {
+  font-size: 2.5em;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+h2 {
+  font-size: 1.875em;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Buttons (from File 1) */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -49,14 +92,54 @@ button {
   font-family: inherit;
   background-color: var(--purple-soft);
   cursor: pointer;
-  transition: border-color 0.25s, background 0.25s;
+  transition: border-color 0.25s, background 0.25s, transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 button:hover {
   border-color: var(--purple-accent);
+  transform: translateY(-2px); /* Added from File 2 */
+}
+button:active {
+  transform: translateY(0);
 }
 button:focus-visible {
   outline: 4px auto rgba(126, 87, 194, 0.3);
 }
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Global Form Inputs (from File 2) */
+/* These will act as defaults */
+input, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-light);
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+input:disabled, textarea:disabled {
+  background-color: var(--bg-light);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* --- MSAI Theme (File 1) --- */
 
 html {
   scroll-behavior: smooth;
@@ -81,7 +164,6 @@ main {
   background: rgba(255, 255, 255, 0.75);
   border-bottom: 1px solid var(--purple-soft);
 }
-
 .msai-nav-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -91,7 +173,6 @@ main {
   padding: 0.8rem 1rem;
   font-size: 1.05rem;
 }
-
 .msai-nav-list {
   list-style: none;
   display: flex;
@@ -99,7 +180,6 @@ main {
   padding: 0;
   margin: 0;
 }
-
 .msai-nav-link {
   padding: 0.45rem 0.6rem;
   border-radius: 6px;
@@ -107,13 +187,11 @@ main {
   text-decoration: none;
   opacity: 0.9;
 }
-
 .msai-nav-link:hover,
 .msai-nav-link:focus {
   background: var(--purple-soft);
   outline: none;
 }
-
 .msai-nav-link.active {
   background: var(--purple-accent);
   color: white;
@@ -128,42 +206,39 @@ main {
   align-items: center;
   background: var(--purple-bg-light);
 }
-
 .msai-hero-inner {
   max-width: 980px;
   text-align: left;
 }
-
 .msai-lead {
   margin-top: 0.6rem;
   margin-bottom: 1.2rem;
   color: #5b4a83;
   font-size: 1.1rem;
 }
-
 .msai-hero-cta {
   display: flex;
   gap: 0.75rem;
 }
 
-/* Buttons */
+/* Button Variants */
 .btn {
   padding: 0.65rem 1rem;
   border-radius: 8px;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
   cursor: pointer;
+  border: none; /* Added for consistency */
+  box-shadow: var(--shadow-sm); /* Added */
 }
-
 .btn:hover {
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md); /* Added */
 }
-
 .btn-primary {
   background: linear-gradient(90deg, #7e57c2, #6d48b5);
   color: white;
   border: none;
 }
-
 .btn-ghost {
   background: var(--purple-soft);
   color: #3a2b5f;
@@ -173,30 +248,26 @@ main {
 .msai-section {
   padding: 3rem 1rem;
 }
-
 .msai-section-inner {
   max-width: 1000px;
   margin: 0 auto;
 }
-
 .msai-section h2 {
   margin-top: 0;
   color: #3a2b5f;
 }
-
 .msai-section-content {
   margin-top: 0.8rem;
   color: #57477b;
 }
 
-/* Cards */
+/* Cards (from File 1) */
 .card {
   padding: 1rem;
   border-radius: 10px;
   background: white;
   border: 1px solid var(--purple-soft);
 }
-
 .card.highlight {
   box-shadow: 0 6px 18px rgba(126, 87, 194, 0.12);
   border-color: var(--purple-accent-light);
@@ -208,7 +279,6 @@ main {
   grid-template-columns: 1fr;
   gap: 0.6rem;
 }
-
 .pricing-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -221,13 +291,12 @@ main {
   gap: 0.6rem;
   max-width: 560px;
 }
-
 .msai-form label {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
-
+/* Overriding global input styles for this specific form */
 .msai-form input,
 .msai-form textarea {
   padding: 0.6rem;
@@ -243,7 +312,6 @@ main {
   border-top: 1px solid var(--purple-soft);
   background: white;
 }
-
 .msai-footer-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -252,7 +320,6 @@ main {
   justify-content: space-between;
   align-items: center;
 }
-
 .muted {
   opacity: 0.8;
   color: #64568a;
@@ -263,30 +330,25 @@ main {
   display: grid;
   gap: 0.5rem;
 }
-
 .password-input-wrap {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
-
 .show-toggle {
   padding: 0.4rem 0.6rem;
 }
-
 .strength-meter {
   height: 10px;
   background: var(--purple-soft);
   border-radius: 6px;
   overflow: hidden;
 }
-
 .strength-bar {
   height: 100%;
   background: linear-gradient(90deg, #ff7b7b, #ffd36b, #7be08a);
   transition: width 180ms ease;
 }
-
 .strength-label {
   margin-top: 0.4rem;
   font-size: 0.85rem;
@@ -304,4 +366,79 @@ main {
   .msai-hero {
     padding-top: 6rem;
   }
+}
+
+/* --- New Utility Classes (from File 2) --- */
+
+/* Alerts */
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+.alert-error {
+  background-color: #fee;
+  color: var(--error-color);
+  border: 1px solid #fca;
+}
+.alert-success {
+  background-color: #efe;
+  color: var(--success-color);
+  border: 1px solid #aca;
+}
+.alert-warning {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+}
+
+/* Form Utilities */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+/* Loading */
+.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
