@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+
+// --- Main App Components ---
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Section from './components/Section';
 import Footer from './components/Footer';
-import Signup from './components/Signup';
 import MindSeekChatbot from './components/MindSeekChatbot';
 import './index.css';
 
+// --- Login/Auth Components ---
+// (Make sure your files are at these paths)
+import Login from './components/Login.jsx';
+import SignUp from './components/SignUp.jsx';
+import WrongPassword from './components/WrongPassword.jsx';
+import ResetPassword from './components/ResetPassword.jsx';
+
 function App() {
   const [activeId, setActiveId] = useState('home');
+  const [message, setMessage] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Scroll-based section highlighting
   useEffect(() => {
+    if (location.pathname !== '/') {
+      return;
+    }
     const ids = ['home', 'features', 'about', 'contact'];
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -31,69 +43,130 @@ function App() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
 
   // Update activeId for route links
   useEffect(() => {
-    if (location.pathname === '/signup') setActiveId('signup');
-    else if (location.pathname === '/ai-demo') setActiveId('ai-demo');
+    const path = location.pathname.replace('/', '');
+    if (path === 'signup' || path === 'ai-demo' || path === 'login') {
+      setActiveId(path);
+    } else if (location.pathname === '/') {
+      setActiveId('home');
+    } else {
+      setActiveId('');
+    }
   }, [location]);
 
-  // Scroll to section
-  function scrollToId(e, id) {
-    if (e) e.preventDefault();
-    const el = document.getElementById(id);
-    if (!el) {
-      navigate('/');
-      setTimeout(() => {
-        const el2 = document.getElementById(id);
-        if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setActiveId(id);
-      }, 80);
+  // Scroll/Navigate Function
+  function scrollToId(idOrEvent, id) {
+    let event = null;
+    let targetId = id;
+
+    if (typeof idOrEvent === 'string') {
+      targetId = idOrEvent;
+    } else {
+      event = idOrEvent;
+      if(event) event.preventDefault();
+    }
+    
+    const pageRoutes = ['signup', 'ai-demo', 'login'];
+
+    if (pageRoutes.includes(targetId)) {
+      setActiveId(targetId);
+      navigate(`/${targetId}`);
       return;
     }
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setActiveId(id);
+
+    const el = document.getElementById(targetId);
+    
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveId(targetId);
+    } else {
+      navigate('/');
+      setActiveId(targetId);
+      setTimeout(() => {
+        const el2 = document.getElementById(targetId);
+        if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
   }
 
+  // Compatibility Function for Login/Auth
+  const setPage = (pageName) => {
+    const path = `/${pageName}`;
+    navigate(path);
+    setActiveId(pageName);
+  };
+
+  // --- Render Logic ---
   return (
     <div className="msai-app">
       <Navbar activeId={activeId} onNavClick={scrollToId} />
 
-      <Routes>
-        <Route path="/" element={
-          <main>
-            <Hero
-              onPrimaryClick={(e) => scrollToId(e, 'contact')}
-              onSecondaryClick={(e) => scrollToId(e, 'features')}
-            />
-            <Section id="features" title="Features">
-              <ul className="feature-list">
-                <li><strong>Micro-practices:</strong> One-minute resets and pairing check-ins.</li>
-                <li><strong>Workflows:</strong> Team-friendly rituals for async-heavy orgs.</li>
-                <li><strong>Privacy-first:</strong> No persistent personal tracking by default.</li>
-              </ul>
-            </Section>
-            <Section id="about" title="About">
-              <p>MindSupportAi provides AI-assisted counseling and on-demand micro-support designed for students. Confidential and immediate support around the clock.</p>
-            </Section>
-            <Section id="contact" title="Contact & Sign up">
-              <form className="msai-form" onSubmit={(e) => { e.preventDefault(); alert('Thanks — demo signup simulated.'); }}>
-                <label>Email<input name="email" type="email" required /></label>
-                <label>Message<textarea name="message" rows={4} /></label>
-                <div className="form-actions">
-                  <button className="btn btn-primary" type="submit">Request demo</button>
-                  <button className="btn btn-ghost" type="button" onClick={(e) => scrollToId(e, 'features')}>Back to features</button>
-                </div>
-              </form>
-            </Section>
-          </main>
-        } />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/ai-demo" element={<MindSeekChatbot />} />
-      </Routes>
+      <div className="main-content min-h-screen">
+        <Routes>
+          {/* --- Home Page (all sections) --- */}
+          <Route path="/" element={
+            <main>
+              <Hero
+                id="home" // <-- ID is added here
+                onPrimaryClick={(e) => scrollToId(e, 'contact')}
+                onSecondaryClick={(e) => scrollToId(e, 'features')}
+              />
+              <Section id="features" title="Features">
+                <p>Feature content goes here...</p>
+              </Section>
+              <Section id="about" title="About">
+                <p>About content goes here...</p>
+              </Section>
+              <Section id="contact" title="Contact & Sign up">
+                <p>Contact form goes here...</p>
+              </Section>
+            </main>
+          } />
+
+          {/* --- Other Pages --- */}
+          <Route path="/ai-demo" element={<MindSeekChatbot />} />
+          
+          {/* --- Auth Pages --- */}
+          <Route path="/login" element={
+            <div className="bg-gray-50 py-12">
+              <Login setPage={setPage} setMessage={setMessage} />
+            </div>
+          } />
+          
+          <Route path="/signup" element={
+            <div className="bg-gray-50 py-12">
+              <SignUp setPage={setPage} setMessage={setMessage} />
+            </div>
+          } />
+          
+          <Route path="/wrong-password" element={
+            <div className="bg-gray-50 py-12">
+              <WrongPassword setPage={setPage} />
+            </div>
+          } />
+          
+          <Route path="/reset-password" element={
+            <div className="bg-gray-50 py-12">
+              <ResetPassword setPage={setPage} />
+            </div>
+          } />
+        </Routes>
+      </div>
 
       <Footer />
+
+      {/* --- Global Message/Notification Display --- */}
+      {message && 
+        <div 
+          className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 cursor-pointer"
+          onClick={() => setMessage(null)}
+        >
+          {message}
+        </div>
+      }
     </div>
   );
 }
