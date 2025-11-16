@@ -1,20 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
-import './MindSeek.css';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import '../components/Mindseek.css';
 
 export default function MindSeekChatbot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hi! I'm MindSeek, your supportive companion. How are you feeling today?"
+      content: "Hi! I'm MindSeek, your supportive companion. How are you feeling today? I can share coping strategies and study tips for high school and college students."
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Replace with your actual API key
-  const GEMINI_API_KEY = 'YOUR_API_KEY_HERE';
+  // Initialize Gemini
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,38 +34,24 @@ export default function MindSeekChatbot() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `You are MindSeek, a supportive AI assistant for students. Respond empathetically and concisely.\nStudent: ${userMessage}`
-                  }
-                ]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 500,
-            }
-          })
-        }
-      );
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
-      const data = await response.json();
-      if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-        const aiResponse = data.candidates[0].content.parts[0].text;
-        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
-      } else {
-        throw new Error('Unexpected response format');
-      }
+      const systemPrompt = `You are MindSeek, a supportive AI assistant for high school and college students. 
+Focus ONLY on coping strategies, stress management, study tips, and mental wellness support. 
+Keep responses under 200 words, empathetic, actionable, and encouraging.
+If someone mentions crisis or self-harm, remind them to reach out to a trusted adult or call 988.`;
+
+      const fullPrompt = `${systemPrompt}\n\nStudent: ${userMessage}\n\nMindSeek:`;
+
+      const result = await model.generateContent(fullPrompt);
+      const output = result.response.text();
+
+      // Trim to 200 words
+      const trimmedOutput = output.split(" ").slice(0, 200).join(" ");
+
+      setMessages(prev => [...prev, { role: 'assistant', content: trimmedOutput }]);
     } catch (error) {
-      console.error('Error calling Gemini API:', error);
+      console.error('Error:', error);
       setMessages(prev => [
         ...prev,
         { role: 'assistant', content: "Sorry, I can't connect right now. Please try again." }
@@ -83,7 +70,6 @@ export default function MindSeekChatbot() {
 
   return (
     <div className="mindseek-container">
-      {/* Header */}
       <div className="mindseek-header">
         <div className="header-content">
           <div className="logo-circle"><Bot size={28} /></div>
@@ -94,7 +80,6 @@ export default function MindSeekChatbot() {
         </div>
       </div>
 
-      {/* Chat Messages */}
       <div className="chat-area">
         <div className="messages-container">
           {messages.map((msg, idx) => (
@@ -123,7 +108,6 @@ export default function MindSeekChatbot() {
         </div>
       </div>
 
-      {/* Input */}
       <div className="input-area">
         <div className="input-container">
           <input
