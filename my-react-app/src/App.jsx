@@ -7,14 +7,15 @@ import Hero from './components/Hero';
 import Section from './components/Section';
 import Footer from './components/Footer';
 import MindSeekChatbot from './components/MindSeekChatbot';
+import ContactForm from './components/ContactForm';
 import './index.css';
 
 // --- Login/Auth Components ---
 // (Make sure your files are at these paths)
 import Login from './components/Login.jsx';
 import SignUp from './components/SignUp.jsx';
-import WrongPassword from './components/WrongPassword.jsx';
-import ResetPassword from './components/ResetPassword.jsx';
+import WrongPassword from './assets/WrongPassword.jsx';
+import ResetPassword from './assets/ResetPassword.jsx';
 
 function App() {
   const [activeId, setActiveId] = useState('home');
@@ -115,13 +116,22 @@ function App() {
                 onSecondaryClick={(e) => scrollToId(e, 'features')}
               />
               <Section id="features" title="Features">
-                <p>Feature content goes here...</p>
+                <ul>
+                  <li><strong>Micro-practices:</strong> One-minute resets and pairing check-ins.</li>
+                  <li><strong>Workflows:</strong> Team-friendly rituals for async-heavy orgs.</li>
+                  <li><strong>Privacy-first:</strong> No persistent personal tracking by default.</li>
+                </ul>
               </Section>
+
               <Section id="about" title="About">
-                <p>About content goes here...</p>
+                <p>
+                  MindSupportAI provides AI-assisted counseling and on-demand micro-support designed specifically for college students. This complements campus mental health services by offering confidential, immediate support around the clock.
+                </p>
               </Section>
+
               <Section id="contact" title="Contact & Sign up">
-                <p>Contact form goes here...</p>
+                <p>Get in touch — we’ll reply promptly.</p>
+                <ContactForm setMessage={setMessage} setPage={setPage} />
               </Section>
             </main>
           } />
